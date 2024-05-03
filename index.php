@@ -15,14 +15,20 @@ Dare all’utente anche la possibilità di permettere o meno la ripetizione di c
 <?php
     // Milestone 1
         // Funzione che genera una password casuale
-        function generatePassword($length) {
+        function generateRandomPassword($length) {
             $password = [];
                 // Lettere minuscole, Lettere maiuscole, Numeri, Simboli
-            
+                $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[]{}|;:,.<>?';
+                $password = '';
+                $charactersLength = strlen($characters);
 
+                // Combinazione di tutti i caratteri
+                for ($i = 0; $i < $length; $i++) {
+                    $randomCharacter = $characters[rand(0, $charactersLength - 1)];
+                    // Generazione della password
+                    $password .= $randomCharacter;
+                }
 
-            // Combinazione di tutti i caratteri
-            // Generazione della password
 
             // Restituzione della password
             return $password;
@@ -46,10 +52,21 @@ Dare all’utente anche la possibilità di permettere o meno la ripetizione di c
         <!-- Milestone 1
         Creare un form che invii in GET la lunghezza della password. Una nostra funzione utilizzerà questo dato per generare una password casuale (composta da lettere, lettere maiuscole, numeri e simboli) da restituire all’utente.
         Scriviamo tutto (logica e layout) in un unico file index.php -->
-        <h1>Password Generator</h1>
-        <div class="container">
+        <div class="container py-5 fs-2">
+            <h1>Password Generator</h1>
             <form action="" method="GET">
-                
+                <label for="pswLen">Lunghezza Password</label>
+                <input type="number" name="pswLen" id="pswLen" required>
+                <button type="submit">Genera</button>
+                <?php if(isset($_GET['pswLen'])) {
+                // Generazione della password
+                    $pswLen = $_GET['pswLen'];
+                    $generatePsw = generateRandomPassword($pswLen);
+                    // La tua password è: <?php echo $password;
+                    echo "<p>La tua password è: $generatePsw</p>";
+
+                }?>
+
             </form>
 
         </div>
