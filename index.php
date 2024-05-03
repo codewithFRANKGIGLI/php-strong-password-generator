@@ -12,27 +12,31 @@ Milestone 4 (BONUS)
 Gestire ulteriori parametri per la password: quali caratteri usare fra numeri, lettere e simboli. Possono essere scelti singolarmente (es. solo numeri) oppure possono essere combinati fra loro (es. numeri e simboli, oppure tutti e tre insieme).
 Dare all’utente anche la possibilità di permettere o meno la ripetizione di caratteri uguali. -->
 
+
 <?php
-    // Milestone 1
-        // Funzione che genera una password casuale
-        function generateRandomPassword($length) {
-            $password = [];
-                // Lettere minuscole, Lettere maiuscole, Numeri, Simboli
-                $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[]{}|;:,.<>?';
-                $password = '';
-                $charactersLength = strlen($characters);
+// Milestone 2
+include __DIR__ . '/functions.php';
 
-                // Combinazione di tutti i caratteri
-                for ($i = 0; $i < $length; $i++) {
-                    $randomCharacter = $characters[rand(0, $charactersLength - 1)];
-                    // Generazione della password
-                    $password .= $randomCharacter;
-                }
+    // // Milestone 1
+    //     // Funzione che genera una password casuale
+    //     function generateRandomPassword($length) {
+    //         $password = [];
+    //             // Lettere minuscole, Lettere maiuscole, Numeri, Simboli
+    //             $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[]{}|;:,.<>?';
+    //             $password = '';
+    //             $charactersLength = strlen($characters);
+
+    //             // Combinazione di tutti i caratteri
+    //             for ($i = 0; $i < $length; $i++) {
+    //                 $randomCharacter = $characters[rand(0, $charactersLength - 1)];
+    //                 // Generazione della password
+    //                 $password .= $randomCharacter;
+    //             }
 
 
-            // Restituzione della password
-            return $password;
-        }
+    //         // Restituzione della password
+    //         return $password;
+    //     }
 
 ?>
 
@@ -64,7 +68,6 @@ Dare all’utente anche la possibilità di permettere o meno la ripetizione di c
                     $generatePsw = generateRandomPassword($pswLen);
                     // La tua password è: <?php echo $password;
                     echo "<p>La tua password è: $generatePsw</p>";
-
                 }?>
 
             </form>
