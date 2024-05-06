@@ -1,81 +1,117 @@
-<!-- Descrizione
-Dobbiamo creare una pagina che permetta ai nostri utenti di utilizzare il nostro generatore di password (abbastanza) sicure.
-L’esercizio è suddiviso in varie milestone ed è molto importante svilupparle in modo ordinato.
-Milestone 1
-Creare un form che invii in GET la lunghezza della password. Una nostra funzione utilizzerà questo dato per generare una password casuale (composta da lettere, lettere maiuscole, numeri e simboli) da restituire all’utente.
-Scriviamo tutto (logica e layout) in un unico file index.php
-Milestone 2
-Verificato il corretto funzionamento del nostro codice, spostiamo la logica in un file functions.php che includeremo poi nella pagina principale
-Milestone 3 (BONUS)
-Invece di visualizzare la password nella index, effettuare un redirect ad una pagina dedicata che tramite $_SESSION recupererà la password da mostrare all’utente.
-Milestone 4 (BONUS)
-Gestire ulteriori parametri per la password: quali caratteri usare fra numeri, lettere e simboli. Possono essere scelti singolarmente (es. solo numeri) oppure possono essere combinati fra loro (es. numeri e simboli, oppure tutti e tre insieme).
-Dare all’utente anche la possibilità di permettere o meno la ripetizione di caratteri uguali. -->
-
-
 <?php
+require_once __DIR__ . '/functions.php';
+
+// Milestone 1
+// Creare un form che invii in GET la lunghezza della password. Una nostra funzione 
+// utilizzerà questo dato per generare una password casuale (composta da lettere, 
+// lettere maiuscole, numeri e simboli) da restituire all’utente.
+// Scriviamo tutto (logica e layout) in un unico file index.php
+
 // Milestone 2
-include __DIR__ . '/functions.php';
+// Verificato il corretto funzionamento del nostro codice, spostiamo la logica in un 
+// file functions.php che includeremo poi nella pagina principale
 
-    // // Milestone 1
-    //     // Funzione che genera una password casuale
-    //     function generateRandomPassword($length) {
-    //         $password = [];
-    //             // Lettere minuscole, Lettere maiuscole, Numeri, Simboli
-    //             $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[]{}|;:,.<>?';
-    //             $password = '';
-    //             $charactersLength = strlen($characters);
+// Milestone 3 (BONUS)
+// Invece di visualizzare la password nella index, effettuare un redirect ad una pagina 
+// dedicata che tramite $_SESSION recupererà la password da mostrare all’utente.
 
-    //             // Combinazione di tutti i caratteri
-    //             for ($i = 0; $i < $length; $i++) {
-    //                 $randomCharacter = $characters[rand(0, $charactersLength - 1)];
-    //                 // Generazione della password
-    //                 $password .= $randomCharacter;
-    //             }
+// Milestone 4 (BONUS)
+// Gestire ulteriori parametri per la password: quali caratteri usare fra numeri, lettere e simboli. 
+// Possono essere scelti singolarmente (es. solo numeri) oppure possono essere combinati fra loro 
+// (es. numeri e simboli, oppure tutti e tre insieme).
+// Dare all’utente anche la possibilità di permettere o meno la ripetizione di caratteri uguali.
+$userPasswordLength = isset($_GET['password-length']) ? intval($_GET['password-length']) : '';
+$userAvailableChars = isset($_GET['available-chars']) ? $_GET['available-chars'] : [];
+$userRepetition = isset($_GET['repetition']) && $_GET['repetition'] === 'yes' ? true : false;
+var_dump($userRepetition);
 
+$password = '';
 
-    //         // Restituzione della password
-    //         return $password;
-    //     }
+if(!empty($userPasswordLength)) {
+    // Per prima cosa ottenere un "lista" di caratteri possibli da cui "pescare" per generare
+    // la password
+    $allAvailableChars = getAvailableChars($userAvailableChars);
+
+    // Generato la password
+    $password = generatePassword($userPasswordLength, $allAvailableChars, $userRepetition);
+
+    // Salvo la password nella session per visualizzarla nella pagina success.php
+    // session_start();
+    // $_SESSION['password'] = $password;
+
+    // Generata la password reindirizzo l'utente alla pagina success
+    // header('Location: ./success.php');
+}
 
 ?>
 
 <!DOCTYPE html>
-<html lang='en'>
-    <head>
-        <meta charset='UTF-8'>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>PHP Psw Gen</title>
-        <!-- Font Awesome: -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <!-- Bootstrap 5 CDN: -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    </head>
-    <body>
-        
-        <!-- Milestone 1
-        Creare un form che invii in GET la lunghezza della password. Una nostra funzione utilizzerà questo dato per generare una password casuale (composta da lettere, lettere maiuscole, numeri e simboli) da restituire all’utente.
-        Scriviamo tutto (logica e layout) in un unico file index.php -->
-        <div class="container py-5 fs-2">
-            <h1>Password Generator</h1>
-            <form action="" method="GET">
-                <label for="pswLen">Lunghezza Password</label>
-                <input type="number" name="pswLen" id="pswLen" required>
-                <button type="submit">Genera</button>
-                <?php if(isset($_GET['pswLen'])) {
-                // Generazione della password
-                    $pswLen = $_GET['pswLen'];
-                    $generatePsw = generateRandomPassword($pswLen);
-                    // La tua password è: <?php echo $password;
-                    echo "<p>La tua password è: $generatePsw</p>";
-                }?>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-            </form>
+    <title>Password Generator</title>
+</head>
+<body>
 
+    <header class="text-center">
+        <h1>Password Generator</h1>
+    </header>
+
+    <main>
+        <div class="container">
+            <p><?php echo empty($password) ? 'Compila il form per generare la password' : 'La tua password è: ' . $password ?></p>
         </div>
 
-    <!-------Script links:------->
-    <!-- Bootstrap: -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <div class="container">
+            <form method="GET">
+                <div class="mb-3">
+                    <label for="password-length" class="form-label">Lunghezza password</label>
+                    <input type="number" class="form-control" id="password-length" name="password-length" value="<?php echo $userPasswordLength; ?>">
+                </div>
+
+                <h4>Consenti ripetizioni di caratteri</h4>
+                <div class="form-check">
+
+                    <input class="form-check-input" type="radio" name="repetition" value="yes" id="repetition-yes">
+                    <label class="form-check-label" for="repetition-yes">
+                        Si
+                    </label>
+                    </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="repetition" value="no" id="repetition-no">
+                    <label class="form-check-label" for="repetition-no">
+                        No
+                    </label>
+                </div>
+
+                <h4>Caratteri da usare</h4>
+
+                <div class="form-check">
+                    <input class="form-check-input" name="available-chars[]" type="checkbox" value="chars" id="chars">
+                    <label class="form-check-label" for="chars">
+                        Lettere
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" name="available-chars[]" type="checkbox" value="numbers" id="numbers">
+                    <label class="form-check-label" for="numbers">
+                        Numeri
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" name="available-chars[]" type="checkbox" value="special-chars" id="special-chars">
+                    <label class="form-check-label" for="special-chars">
+                        Caratteri speciali
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </main>
+    
 </body>
 </html>
